@@ -1,0 +1,16 @@
+{
+  "name": "websocket-events",
+  "version": "1.0.0",
+  "description": "generate sample websocket events",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fs": "0.0.1-security",
+    "ws": "^7.4.2"
+  }
+}
