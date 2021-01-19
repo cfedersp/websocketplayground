@@ -1,6 +1,7 @@
 <html>
 <script>
 	var socket;
+	var socketEndpoint;
 	function handleConnectButton(e) {
 		if(socket && socket.readyState != WebSocket.CLOSED) {
 			addEvent("Connection already created. State: " + stateToString(socket.readyState));
@@ -10,7 +11,7 @@
 			openWebsocket().then(function(result) {
 				socket = result;
 				
-				document.getElementById('connectionStatus').innerHTML = "Connected";
+				document.getElementById('connectionStatus').innerHTML = "Connected to: " + socketEndpoint;
 				//document.getElementById('disconnectButton').enable;
 				
 				addEvent("Opened websocket");
@@ -52,8 +53,14 @@
 		// enclose your async connection+callback in a Promise to make controller methods more readable.
 		// the Promise gets returned immediately, but Promise.then (see above) will block until its resolve method (see below) is invoked.
 		return new Promise(function(resolve, reject) { 
+			let endpoint = document.getElementById("hostEndpointInput").value;
+			let query = assembleQueryFromFormFields();
+			if(query) {
+				endpoint += "?" + query;
+			}
+			socketEndpoint = endpoint; // assign to global
 			
-			let localSocket = new WebSocket(document.getElementById("hostEndpointInput").value);
+			let localSocket = new WebSocket(endpoint);
 			// addEvent("opened localhost websocket"); this log stmt is false! Connection is not open until onopen callback is invoked!
 
 			localSocket.onopen = function (event) {
@@ -65,8 +72,19 @@
 			
 		});
 	}
-	function addParams() {
-		// TODO: needs backing model to do this properly.
+	function assembleQueryFromFormFields() {
+		let query = "";
+		let paramName1 = document.getElementById("filterParamName").value;
+		if(paramName1) {
+			paramValue1 = document.getElementById("filterParamValue").value;
+		}
+		if(paramName1 && paramValue1) {
+			query += paramName1 + "=" + paramValue1
+		}
+		return query;
+	}
+	function addNewParams() {
+		// TODO: We need backing model to do this properly.
 	}
 	function clearEventsBox() {
 		document.getElementById('eventList').innerHTML = "no events<br>\n";
@@ -127,8 +145,8 @@
 
 <div class="dashboardLayout">
 <form>
-	<div class="row"><div class="rowLabel" id="hostEndpointLabel">Websocket Endpoint:</div><div class="hostInfo"><input type="text" id="hostEndpointInput" name="hostEndpointInput" value="ws://localhost:8080"/></div> <div id="connectionStatus" class="statusField">Not Connected</div></div>
-	
+	<div class="row"><div class="rowLabel" id="hostEndpointLabel">Websocket Endpoint:</div><div class="hostInfo"><input type="text" id="hostEndpointInput" name="hostEndpointInput" value="ws://localhost:8080"/></div> </div>
+	<div class="row" id="connectionStatus">Not Connected</div>
 	<div class="row">
 		<div class="rowLabel" id="paramsLabel">Connection Parameters:</div>
 		<div class="expandableList" id="paramList">

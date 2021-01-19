@@ -7,13 +7,13 @@ const wss = new ws.Server({noServer: true});
 function accept(req, res) {
   // all incoming requests must be websockets or we return the index page
   if (!req.headers.upgrade || req.headers.upgrade.toLowerCase() != 'websocket') {
-    console.log("not a websocket request")
+    // console.log("not a websocket request")
     fs.stat("index.html", function(err, stats) {
     	if(err) {
     		console.log("index file not found");
     	} else {
-    		console.log("is dir: " + stats.isDirectory());
-    		console.log("index stats: " + stats.size);
+    		// console.log("is dir: " + stats.isDirectory());
+    		// console.log("index stats: " + stats.size);
     		res.writeHead(200, { 'content-type': 'text/html', 'content-length': stats.size })
     		fs.createReadStream('index.html').pipe(res);
     	}
